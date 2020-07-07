@@ -42,20 +42,7 @@ namespace MemuMongoBase
 
         public async Task<T2> Get(string id) =>
             Convert(await _items.Find<T>(item => item.Id == id).FirstOrDefaultAsync());
-        public virtual async Task<List<T>> GetRaw()
-        {
-            var items = await _items.Find(race => true).ToListAsync();
-            return items;
-        }
-
-        public async Task<T> GetRaw(string id) =>
-            await _items.Find<T>(item => item.Id == id).FirstOrDefaultAsync();
-
-        public async Task<T> InsertRaw(T item)
-        {
-            await _items.InsertOneAsync(item);
-            return item;
-        }
+        
     }
 
     public class MemuMongoBaseService<T> where T : MemuMongoBase
@@ -87,6 +74,15 @@ namespace MemuMongoBase
             await _items.InsertOneAsync(item);
             return item;
         }
+
+        public async Task Update(string id, T itemIn) =>
+            await _items.ReplaceOneAsync(item => item.Id == id, itemIn);
+
+        public async Task Remove(T itemIn) =>
+            await _items.DeleteOneAsync(item => item.Id == itemIn.Id);
+
+        public async Task Remove(string id) =>
+            await _items.DeleteOneAsync(item => item.Id == id);
     }
 
     public class MemuMongoBase
