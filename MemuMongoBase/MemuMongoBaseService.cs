@@ -83,6 +83,23 @@ namespace MemuMongoBase
 
         public async Task Remove(string id) =>
             await _items.DeleteOneAsync(item => item.Id == id);
+
+        protected virtual async Task<T> FindUpsert(T item)
+        {
+            return await Get(item.Id);
+        }
+        public async Task<T> Upsert(T item)
+        {
+            var r = await FindUpsert(item); 
+            if (r == null)
+                return await Insert(item);
+            else
+            {
+                item.Id = r.Id;
+                await Update(r.Id, item);
+                return item;
+            }
+        }
     }
 
     public class MemuMongoBase
