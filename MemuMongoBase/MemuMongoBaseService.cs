@@ -84,7 +84,7 @@ namespace MemuMongoBase
         public async Task Remove(string id) =>
             await _items.DeleteOneAsync(item => item.Id == id);
 
-        protected virtual async Task<T> FindUpsert(T item)
+        public virtual async Task<T> FindUpsert(T item)
         {
             return await Get(item.Id);
         }
